@@ -30,11 +30,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_20
+        targetCompatibility = JavaVersion.VERSION_20
     }
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "20"
     }
     buildFeatures {
         compose = true
@@ -54,6 +54,7 @@ dependencies {
 
     // Data persistence
     implementation(libs.androidx.room.runtime)
+    testImplementation(libs.androidx.core)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
