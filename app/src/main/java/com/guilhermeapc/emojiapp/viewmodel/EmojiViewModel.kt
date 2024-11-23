@@ -14,6 +14,7 @@ import timber.log.Timber
 data class EmojiUiState(
     val isLoading: Boolean = false,
     val emojis: List<Emoji> = emptyList(),
+    val selectedEmoji: Emoji? = null,
     val error: String? = null
 )
 
@@ -39,4 +40,27 @@ class EmojiViewModel @Inject constructor(
             }
         }
     }
+
+    fun getRandomEmoji() {
+        Timber.d("Getting a random emoji")
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                // Ensure emojis are fetched
+                val emojis = repository.getEmojis()
+                if (emojis.isNotEmpty()) {
+                    val randomEmoji = emojis.random()
+                    _uiState.update { it.copy(isLoading = false, emojis = emojis, selectedEmoji = randomEmoji) }
+                    Timber.d("Random emoji selected: $randomEmoji")
+                } else {
+                    _uiState.update { it.copy(isLoading = false, error = "No emojis available") }
+                    Timber.d("No emojis available to select")
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Error getting random emoji")
+                _uiState.update { it.copy(isLoading = false, error = e.localizedMessage ?: "An unexpected error occurred") }
+            }
+        }
+    }
 }
+

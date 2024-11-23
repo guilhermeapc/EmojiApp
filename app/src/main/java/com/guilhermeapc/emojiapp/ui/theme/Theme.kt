@@ -1,3 +1,4 @@
+//Theme.kt
 package com.guilhermeapc.emojiapp.ui.theme
 
 import android.os.Build
@@ -25,7 +26,7 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun EmojiappTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
+    // Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
