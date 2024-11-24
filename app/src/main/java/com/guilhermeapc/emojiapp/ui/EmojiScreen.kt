@@ -1,5 +1,4 @@
 // EmojiScreen.kt
-
 package com.guilhermeapc.emojiapp.ui
 
 import androidx.compose.foundation.Image
@@ -51,19 +50,19 @@ fun EmojiScreen(viewModel: EmojiViewModel = hiltViewModel()) {
                     }
                     uiState.selectedEmoji != null -> {
                         uiState.selectedEmoji?.also {
-                        // Display the selected random emoji
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Image(
-                                painter = rememberAsyncImagePainter(it.url),
-                                contentDescription = it.name,
-                                modifier = Modifier.size(100.dp)
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(text = it.name, style = MaterialTheme.typography.titleMedium)
+                            // Display the selected random emoji
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Image(
+                                    painter = rememberAsyncImagePainter(it.url),
+                                    contentDescription = it.name,
+                                    modifier = Modifier.size(100.dp)
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(text = it.name, style = MaterialTheme.typography.titleMedium)
+                            }
                         }
-                    }
                     }
                     else -> {
                         // Optionally, show a placeholder or prompt
