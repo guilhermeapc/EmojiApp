@@ -31,7 +31,7 @@ object NetworkModule {
         val logging = HttpLoggingInterceptor { message ->
             Timber.tag("OkHttp").d(message)
         }
-        logging.level = HttpLoggingInterceptor.Level.BODY // Choose the desired log level
+        logging.level = HttpLoggingInterceptor.Level.BODY // Choose desired log level
 
         return OkHttpClient.Builder()
             .addInterceptor(logging)

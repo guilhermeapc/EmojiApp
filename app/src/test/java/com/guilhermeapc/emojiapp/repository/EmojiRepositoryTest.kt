@@ -54,7 +54,10 @@ class EmojiRepositoryTest {
             Emoji(name = "+1", url = "https://emoji.url/plus1.png"),
             Emoji(name = "-1", url = "https://emoji.url/minus1.png")
         )
-        coEvery { apiService.fetchEmojis() } returns apiEmojis
+        coEvery { apiService.fetchEmojis() } returns mapOf(
+            "+1" to "https://emoji.url/plus1.png",
+            "-1" to "https://emoji.url/minus1.png"
+        )
         coEvery { emojiDao.insertAll(apiEmojis) } returns Unit
 
         // When: Calling getEmojis
