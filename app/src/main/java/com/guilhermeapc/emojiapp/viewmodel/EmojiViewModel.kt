@@ -14,7 +14,7 @@ import timber.log.Timber
 data class EmojiUiState(
     val isLoading: Boolean = false,
     val emojis: List<Emoji> = emptyList(),
-    val selectedEmoji: Emoji? = null,
+    val selectedEmoji: Emoji? = null, // Added field for selected emoji
     val error: String? = null
 )
 
@@ -26,6 +26,7 @@ class EmojiViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(EmojiUiState())
     val uiState: StateFlow<EmojiUiState> = _uiState.asStateFlow()
 
+    // *old* function to display all emojis obtained
     fun fetchEmojis() {
         Timber.d("Fetching emojis from repository")
         viewModelScope.launch {
@@ -36,7 +37,12 @@ class EmojiViewModel @Inject constructor(
                 _uiState.update { it.copy(isLoading = false, emojis = emojis) }
             } catch (e: Exception) {
                 Timber.e(e, "Error fetching emojis")
-                _uiState.update { it.copy(isLoading = false, error = e.localizedMessage ?: "An unexpected error occurred") }
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = e.localizedMessage ?: "An unexpected error occurred"
+                    )
+                }
             }
         }
     }
@@ -50,7 +56,13 @@ class EmojiViewModel @Inject constructor(
                 val emojis = repository.getEmojis()
                 if (emojis.isNotEmpty()) {
                     val randomEmoji = emojis.random()
-                    _uiState.update { it.copy(isLoading = false, emojis = emojis, selectedEmoji = randomEmoji) }
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            emojis = emojis,
+                            selectedEmoji = randomEmoji
+                        )
+                    }
                     Timber.d("Random emoji selected: $randomEmoji")
                 } else {
                     _uiState.update { it.copy(isLoading = false, error = "No emojis available") }
@@ -58,9 +70,13 @@ class EmojiViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 Timber.e(e, "Error getting random emoji")
-                _uiState.update { it.copy(isLoading = false, error = e.localizedMessage ?: "An unexpected error occurred") }
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = e.localizedMessage ?: "An unexpected error occurred"
+                    )
+                }
             }
         }
     }
 }
-

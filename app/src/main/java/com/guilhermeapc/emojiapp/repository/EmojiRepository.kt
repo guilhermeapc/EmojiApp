@@ -23,16 +23,19 @@ class EmojiRepository @Inject constructor(
         }
 
         Timber.d("No emojis found in cache. Making network request to fetch emojis")
-        val emojiList = apiService.fetchEmojis()
-        Timber.d("Received emojis from API: $emojiList")
+        val emojiMap = apiService.fetchEmojis()
+        Timber.d("Received emojis from API: $emojiMap")
+        val emojiList = emojiMap.map { Emoji(it.key, it.value) }
         emojiDao.insertAll(emojiList)
         return emojiList
     }
 
+    // To use eventually in Pull-To-Refresh behaviour
     suspend fun refreshEmojis(): List<Emoji> {
         Timber.d("Refreshing emojis from the API")
-        val emojiList = apiService.fetchEmojis()
-        Timber.d("Received emojis from API: $emojiList")
+        val emojiMap = apiService.fetchEmojis()
+        Timber.d("Received emojis from API: $emojiMap")
+        val emojiList = emojiMap.map { Emoji(it.key, it.value) }
         emojiDao.deleteAllEmojis()
         emojiDao.insertAll(emojiList)
         return emojiList
