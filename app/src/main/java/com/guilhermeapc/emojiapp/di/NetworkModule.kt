@@ -1,7 +1,7 @@
 // NetworkModule.kt
 package com.guilhermeapc.emojiapp.di
 
-import com.guilhermeapc.emojiapp.network.EmojiApiService
+import com.guilhermeapc.emojiapp.network.GitHubApiService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -31,7 +31,7 @@ object NetworkModule {
         val logging = HttpLoggingInterceptor { message ->
             Timber.tag("OkHttp").d(message)
         }
-        logging.level = HttpLoggingInterceptor.Level.BODY // Choose the desired log level
+        logging.level = HttpLoggingInterceptor.Level.BODY // Desired log level
 
         return OkHttpClient.Builder()
             .addInterceptor(logging)
@@ -49,6 +49,6 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideEmojiApiService(retrofit: Retrofit): EmojiApiService =
-        retrofit.create(EmojiApiService::class.java)
+    fun provideGitHubApiService(retrofit: Retrofit): GitHubApiService =
+        retrofit.create(GitHubApiService::class.java)
 }
