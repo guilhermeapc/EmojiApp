@@ -14,8 +14,9 @@ import timber.log.Timber
 data class EmojiUiState(
     val isLoading: Boolean = false,
     val emojis: List<Emoji> = emptyList(),
-    val selectedEmoji: Emoji? = null, // Added field for selected emoji
-    val error: String? = null
+    val selectedEmoji: Emoji? = null,
+    val error: String? = null,
+    val isRefreshing: Boolean = false
 )
 
 @HiltViewModel
@@ -26,26 +27,53 @@ class EmojiViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(EmojiUiState())
     val uiState: StateFlow<EmojiUiState> = _uiState.asStateFlow()
 
-    // *old* function to display all emojis obtained
     fun fetchEmojis() {
-        Timber.d("Fetching emojis from repository")
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null) }
+            _uiState.update { it.copy(isLoading = true, error = null, isRefreshing = true) }
             try {
                 val emojis = repository.getEmojis()
                 Timber.d("Received emojis: $emojis")
-                _uiState.update { it.copy(isLoading = false, emojis = emojis) }
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        emojis = emojis,
+                        isRefreshing = false
+                    )
+                }
             } catch (e: Exception) {
                 Timber.e(e, "Error fetching emojis")
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        error = e.localizedMessage ?: "An unexpected error occurred"
+                        error = e.localizedMessage ?: "An unexpected error occurred",
+                        isRefreshing = false
                     )
                 }
             }
         }
     }
+
+    fun removeEmoji(emoji: Emoji) {
+        viewModelScope.launch {
+            val updatedList = _uiState.value.emojis.toMutableList().apply {
+                remove(emoji)
+            }
+            _uiState.update { it.copy(emojis = updatedList) }
+            Timber.d("Emoji removed: ${emoji.name}")
+        }
+    }
+
+    fun addEmoji(emoji: Emoji) {
+        // Used at the moment just for undoing the removal from list
+        viewModelScope.launch {
+            val updatedList = _uiState.value.emojis.toMutableList().apply {
+                add(emoji)
+            }
+            _uiState.update { it.copy(emojis = updatedList) }
+            Timber.d("Emoji re-added: ${emoji.name}")
+        }
+    }
+
 
     fun getRandomEmoji() {
         Timber.d("Getting a random emoji")
