@@ -5,6 +5,8 @@ import android.content.Context
 import androidx.room.Room
 import com.guilhermeapc.emojiapp.data.AppDatabase
 import com.guilhermeapc.emojiapp.data.EmojiDao
+import com.guilhermeapc.emojiapp.data.GitHubUserDao
+import com.guilhermeapc.emojiapp.data.MIGRATION_1_2
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,7 +27,9 @@ object DatabaseModule {
             context.applicationContext,
             AppDatabase::class.java,
             "emoji_database"
-        ).build()
+        )
+            .addMigrations(MIGRATION_1_2)
+            .build()
     }
 
     @Provides
@@ -33,5 +37,10 @@ object DatabaseModule {
         appDatabase: AppDatabase
     ): EmojiDao {
         return appDatabase.emojiDao()
+    }
+
+    @Provides
+    fun provideGitHubUserDao(database: AppDatabase): GitHubUserDao {
+        return database.gitHubUserDao()
     }
 }

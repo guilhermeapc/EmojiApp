@@ -4,10 +4,14 @@ package com.guilhermeapc.emojiapp.viewmodel
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
 import com.guilhermeapc.emojiapp.data.EmojiDao
+import com.guilhermeapc.emojiapp.data.GitHubUserDao
 import com.guilhermeapc.emojiapp.model.Emoji
+import com.guilhermeapc.emojiapp.model.GitHubUser
 import com.guilhermeapc.emojiapp.network.EmojiApiService
+import com.guilhermeapc.emojiapp.network.GitHubApiService
 import com.guilhermeapc.emojiapp.repository.EmojiRepository
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.*
@@ -27,15 +31,22 @@ class EmojiViewModelTest {
 
     private lateinit var repository: EmojiRepository
     private lateinit var emojiDao: EmojiDao
-    private lateinit var apiService: EmojiApiService
+    private lateinit var githubUserDao: GitHubUserDao
+    private lateinit var emojiApiService: EmojiApiService
+    private lateinit var githubApiService: GitHubApiService
     private lateinit var viewModel: EmojiViewModel
 
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         emojiDao = mockk(relaxed = true)
-        apiService = mockk(relaxed = true)
-        repository = EmojiRepository(apiService, emojiDao)
+        emojiApiService = mockk(relaxed = true)
+        repository = EmojiRepository(
+            emojiApiService = emojiApiService,
+            gitHubApiService = githubApiService,
+            emojiDao = emojiDao,
+            gitHubUserDao = githubUserDao)
+
         viewModel = EmojiViewModel(repository)
     }
 
@@ -116,5 +127,38 @@ class EmojiViewModelTest {
         // Then
         val expectedEmojis = listOf(emojis[1])
         assertEquals(expectedEmojis, viewModel.uiState.value.emojis)
+    }
+
+    @Test
+    fun `deleteGitHubUser removes user from repository`() = runBlocking {
+        // Given
+        val user = GitHubUser(
+            login = "octocat",
+            id = 1,
+            avatar_url = "https://avatars.githubusercontent.com/u/1?v=4"
+        )
+        viewModel.addGitHubUser(user) // Ensure user is added
+
+        // When
+        viewModel.deleteGitHubUser(user)
+
+        // Then
+        coVerify { repository.deleteGitHubUser(user) }
+    }
+
+    @Test
+    fun `addGitHubUser adds user to repository`() = runBlocking {
+        // Given
+        val user = GitHubUser(
+            login = "octocat",
+            id = 1,
+            avatar_url = "https://avatars.githubusercontent.com/u/1?v=4"
+        )
+
+        // When
+        viewModel.addGitHubUser(user)
+
+        // Then
+        coVerify { repository.addGitHubUser(user) }
     }
 }

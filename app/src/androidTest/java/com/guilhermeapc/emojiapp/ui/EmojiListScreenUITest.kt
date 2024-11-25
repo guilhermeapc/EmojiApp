@@ -82,7 +82,7 @@ class EmojiListScreenUITest {
 
         // Then
         // Perform swipe down gesture to trigger pull-to-refresh
-        composeTestRule.onNode(hasTestTag("PullRefreshBox")).performTouchInput {
+        composeTestRule.onNode(hasTestTag("pull_refresh_box")).performTouchInput {
             swipeDown()
         }
 
