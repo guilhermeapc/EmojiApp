@@ -4,10 +4,12 @@ package com.guilhermeapc.emojiapp.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.guilhermeapc.emojiapp.model.Emoji
+import com.guilhermeapc.emojiapp.model.GitHubUser
 import com.guilhermeapc.emojiapp.repository.EmojiRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import javax.inject.Inject
 import timber.log.Timber
 
@@ -16,7 +18,11 @@ data class EmojiUiState(
     val emojis: List<Emoji> = emptyList(),
     val selectedEmoji: Emoji? = null,
     val error: String? = null,
-    val isRefreshing: Boolean = false
+    val searchError: String? = null,
+    val isRefreshing: Boolean = false,
+    val searchedUser: GitHubUser? = null,
+    val isSearching: Boolean = false,
+    val cachedUsers: List<GitHubUser> = emptyList()
 )
 
 @HiltViewModel
@@ -26,6 +32,16 @@ class EmojiViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(EmojiUiState())
     val uiState: StateFlow<EmojiUiState> = _uiState.asStateFlow()
+
+    init {
+        // Observe cached GitHub users
+        viewModelScope.launch {
+            repository.getAllGitHubUsers().collect { users ->
+                Timber.d("Cached users updated: $users")
+                _uiState.update { it.copy(cachedUsers = users) }
+            }
+        }
+    }
 
     fun fetchEmojis() {
         viewModelScope.launch {
@@ -107,4 +123,48 @@ class EmojiViewModel @Inject constructor(
             }
         }
     }
+
+    // New functions for Avatar List
+    fun deleteGitHubUser(user: GitHubUser) {
+        viewModelScope.launch {
+            repository.deleteGitHubUser(user)
+            Timber.d("GitHub user deleted: ${user.login}")
+        }
+    }
+
+    fun addGitHubUser(user: GitHubUser) {
+        viewModelScope.launch {
+            repository.addGitHubUser(user)
+            Timber.d("GitHub user re-added: ${user.login}")
+        }
+    }
+
+    fun searchGitHubUser(username: String) {
+        viewModelScope.launch {
+            if (username.isBlank()) {
+                _uiState.update { it.copy(error = "Username cannot be empty") }
+                return@launch
+            }
+            _uiState.update { it.copy(isSearching = true, error = null, searchedUser = null) }
+            try {
+                val user = repository.getGitHubUser(username)
+                _uiState.update { it.copy(searchedUser = user, isSearching = false) }
+                Timber.d("Searched user: $user")
+            } catch (e: Exception) {
+                val errorMessage = when (e) {
+                    is HttpException -> {
+                        if (e.code() == 404) {
+                            "User not found" // Specific message for 404 error
+                        } else {
+                            "Failed to fetch user" // Generic message for other errors
+                        }
+                    }
+
+                    else -> "Failed to fetch user" // Generic message for other exceptions
+                }
+                _uiState.update { it.copy(isSearching = false, searchError = errorMessage) }
+            }
+        }
+    }
 }
+

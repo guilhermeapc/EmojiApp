@@ -10,10 +10,13 @@ import androidx.navigation.compose.composable
 fun NavGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "emoji_screen") {
         composable("emoji_screen") {
-            EmojiScreen(navController = navController)
+            MainScreen(navController = navController)
         }
         composable("emoji_list_screen") {
             EmojiListScreen(navController = navController)
+        }
+        composable("avatar_list") {
+            AvatarListScreen(navController = navController)
         }
     }
 }

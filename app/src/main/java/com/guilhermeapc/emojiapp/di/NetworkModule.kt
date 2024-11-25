@@ -4,6 +4,7 @@ package com.guilhermeapc.emojiapp.di
 import com.guilhermeapc.emojiapp.network.EmojiApiService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.guilhermeapc.emojiapp.network.GitHubApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -51,4 +52,10 @@ object NetworkModule {
     @Singleton
     fun provideEmojiApiService(retrofit: Retrofit): EmojiApiService =
         retrofit.create(EmojiApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideGitHubApiService(retrofit: Retrofit): GitHubApiService {
+        return retrofit.create(GitHubApiService::class.java)
+    }
 }
