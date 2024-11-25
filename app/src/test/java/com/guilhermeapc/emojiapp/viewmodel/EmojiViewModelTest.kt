@@ -3,12 +3,13 @@
 package com.guilhermeapc.emojiapp.viewmodel
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
+import com.guilhermeapc.emojiapp.data.EmojiDao
 import com.guilhermeapc.emojiapp.model.Emoji
+import com.guilhermeapc.emojiapp.network.EmojiApiService
 import com.guilhermeapc.emojiapp.repository.EmojiRepository
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.*
 import org.junit.After
 import org.junit.Assert.*
@@ -25,12 +26,16 @@ class EmojiViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
 
     private lateinit var repository: EmojiRepository
+    private lateinit var emojiDao: EmojiDao
+    private lateinit var apiService: EmojiApiService
     private lateinit var viewModel: EmojiViewModel
 
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        repository = mockk()
+        emojiDao = mockk(relaxed = true)
+        apiService = mockk(relaxed = true)
+        repository = EmojiRepository(apiService, emojiDao)
         viewModel = EmojiViewModel(repository)
     }
 
@@ -92,5 +97,24 @@ class EmojiViewModelTest {
         assertEquals(false, uiState.isLoading)
         assertEquals("Network Error", uiState.error)
         assertNull(uiState.selectedEmoji)
+    }
+
+    @Test
+    fun `removeEmoji removes the specified emoji from the list`() = runTest {
+        // Given
+        val emojis = listOf(
+            Emoji(name = "+1", url = "https://emoji.url/plus1.png"),
+            Emoji(name = "-1", url = "https://emoji.url/minus1.png")
+        )
+        coEvery { repository.getEmojis() } returns emojis
+        viewModel.fetchEmojis()
+        advanceUntilIdle()
+
+        // When
+        viewModel.removeEmoji(emojis[0]) // Remove "+1"
+
+        // Then
+        val expectedEmojis = listOf(emojis[1])
+        assertEquals(expectedEmojis, viewModel.uiState.value.emojis)
     }
 }

@@ -11,10 +11,11 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.guilhermeapc.emojiapp.viewmodel.EmojiViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import timber.log.Timber
 
 @Composable
-fun EmojiScreen(viewModel: EmojiViewModel = hiltViewModel()) {
+fun EmojiScreen(navController: NavController, viewModel: EmojiViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
@@ -26,6 +27,7 @@ fun EmojiScreen(viewModel: EmojiViewModel = hiltViewModel()) {
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                // Button to fetch a random emoji
                 Button(
                     onClick = {
                         Timber.d("Random Emoji button clicked")
@@ -38,16 +40,32 @@ fun EmojiScreen(viewModel: EmojiViewModel = hiltViewModel()) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                // Button to navigate to Emoji List screen
+                Button(
+                    onClick = {
+                        Timber.d("Emoji List button clicked")
+                        navController.navigate("emoji_list_screen")
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+                ) {
+                    Text(text = "Emoji List")
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Display logic
                 when {
                     uiState.isLoading -> {
                         CircularProgressIndicator()
                     }
+
                     uiState.error != null -> {
                         Text(
                             text = "Error: ${uiState.error}",
                             color = MaterialTheme.colorScheme.error
                         )
                     }
+
                     uiState.selectedEmoji != null -> {
                         uiState.selectedEmoji?.also {
                             // Display the selected random emoji
@@ -60,12 +78,16 @@ fun EmojiScreen(viewModel: EmojiViewModel = hiltViewModel()) {
                                     modifier = Modifier.size(100.dp)
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text(text = it.name, style = MaterialTheme.typography.titleMedium)
+                                Text(
+                                    text = it.name,
+                                    style = MaterialTheme.typography.titleMedium
+                                )
                             }
                         }
                     }
+
                     else -> {
-                        // Optionally, show a placeholder or prompt
+                        // Placeholder prompt
                         Text(text = "Press 'Random Emoji' to display an emoji")
                     }
                 }
