@@ -21,14 +21,14 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.guilhermeapc.emojiapp.model.Emoji
-import com.guilhermeapc.emojiapp.viewmodel.EmojiViewModel
+import com.guilhermeapc.emojiapp.viewmodel.MainViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EmojiListScreen(navController: NavController, viewModel: EmojiViewModel = hiltViewModel()) {
+fun EmojiListScreen(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val state = rememberPullToRefreshState()
     val onRefresh: () -> Unit = {

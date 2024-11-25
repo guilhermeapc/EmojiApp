@@ -18,5 +18,8 @@ fun NavGraph(navController: NavHostController) {
         composable("avatar_list") {
             AvatarListScreen(navController = navController)
         }
+        composable("google_repos") {
+            GoogleReposScreen(navController = navController)
+        }
     }
 }

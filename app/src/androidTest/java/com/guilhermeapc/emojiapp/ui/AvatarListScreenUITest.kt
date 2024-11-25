@@ -4,8 +4,8 @@ package com.guilhermeapc.emojiapp.ui
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.guilhermeapc.emojiapp.model.GitHubUser
-import com.guilhermeapc.emojiapp.viewmodel.EmojiUiState
-import com.guilhermeapc.emojiapp.viewmodel.EmojiViewModel
+import com.guilhermeapc.emojiapp.viewmodel.AppUiState
+import com.guilhermeapc.emojiapp.viewmodel.MainViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -21,7 +21,7 @@ class AvatarListScreenUITest {
     @Test
     fun avatarListScreen_displaysCachedUsers() {
         // Given
-        val mockViewModel = mockk<EmojiViewModel>(relaxed = true)
+        val mockViewModel = mockk<MainViewModel>(relaxed = true)
         val users = listOf(
             GitHubUser(
                 login = "octocat",
@@ -35,7 +35,7 @@ class AvatarListScreenUITest {
             )
         )
         coEvery { mockViewModel.uiState } returns MutableStateFlow(
-            EmojiUiState(
+            AppUiState(
                 isLoading = false,
                 cachedUsers = users,
                 error = null
@@ -55,14 +55,14 @@ class AvatarListScreenUITest {
     @Test
     fun avatarListScreen_deletesUserOnDeleteButtonClick() {
         // Given
-        val mockViewModel = mockk<EmojiViewModel>(relaxed = true)
+        val mockViewModel = mockk<MainViewModel>(relaxed = true)
         val user = GitHubUser(
             login = "octocat",
             id = 1,
             avatar_url = "https://avatars.githubusercontent.com/u/1?v=4"
         )
         coEvery { mockViewModel.uiState } returns MutableStateFlow(
-            EmojiUiState(
+            AppUiState(
                 isLoading = false,
                 cachedUsers = listOf(user),
                 error = null

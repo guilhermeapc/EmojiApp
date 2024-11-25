@@ -2,8 +2,11 @@
 package com.guilhermeapc.emojiapp.repository
 
 import com.guilhermeapc.emojiapp.data.EmojiDao
+import com.guilhermeapc.emojiapp.data.GitHubRepoDao
+import com.guilhermeapc.emojiapp.data.GitHubUserDao
+import com.guilhermeapc.emojiapp.data.RemoteKeysDao
 import com.guilhermeapc.emojiapp.model.Emoji
-import com.guilhermeapc.emojiapp.network.EmojiApiService
+import com.guilhermeapc.emojiapp.network.GitHubApiService
 import io.mockk.coEvery
 import io.mockk.mockk
 import io.mockk.verify
@@ -15,18 +18,28 @@ import org.junit.Before
 import org.junit.Test
 
 class EmojiRepositoryTest {
-
-    private lateinit var apiService: EmojiApiService
+    private lateinit var gitHubApiService: GitHubApiService
     private lateinit var emojiDao: EmojiDao
-    private lateinit var repository: EmojiRepository
+    private lateinit var gitHubUserDao: GitHubUserDao
+    private lateinit var gitHubRepoDao: GitHubRepoDao
+    private lateinit var remoteKeysDao: RemoteKeysDao
+    private lateinit var repository: AppRepository
 
     @Before
     fun setUp() {
         // Create mock instances
-        apiService = mockk(relaxed = true)
+        gitHubApiService = mockk(relaxed = true)
         emojiDao = mockk(relaxed = true)
+        gitHubRepoDao = mockk(relaxed = true)
+        remoteKeysDao = mockk(relaxed = true)
         // Initialize repository with mocks
-        repository = EmojiRepository(apiService, emojiDao)
+        repository = AppRepository(
+            emojiDao = emojiDao,
+            gitHubUserDao = gitHubUserDao,
+            gitHubApiService = gitHubApiService,
+            gitHubRepoDao = gitHubRepoDao,
+            remoteKeysDao = remoteKeysDao
+        )
     }
 
     @Test
@@ -54,7 +67,7 @@ class EmojiRepositoryTest {
             Emoji(name = "+1", url = "https://emoji.url/plus1.png"),
             Emoji(name = "-1", url = "https://emoji.url/minus1.png")
         )
-        coEvery { apiService.fetchEmojis() } returns mapOf(
+        coEvery { gitHubApiService.fetchEmojis() } returns mapOf(
             "+1" to "https://emoji.url/plus1.png",
             "-1" to "https://emoji.url/minus1.png"
         )
@@ -74,7 +87,7 @@ class EmojiRepositoryTest {
         // Given: No cached emojis
         coEvery { emojiDao.getAllEmojis() } returns flowOf(emptyList())
         // Mock API failure
-        coEvery { apiService.fetchEmojis() } throws Exception("Network Error")
+        coEvery { gitHubApiService.fetchEmojis() } throws Exception("Network Error")
 
         // When & Then: Use Assert.assertThrows to verify exception
         val exception = assertThrows(Exception::class.java) {
