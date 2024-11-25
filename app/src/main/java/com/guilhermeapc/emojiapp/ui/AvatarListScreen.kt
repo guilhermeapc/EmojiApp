@@ -16,14 +16,14 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.guilhermeapc.emojiapp.model.GitHubUser
-import com.guilhermeapc.emojiapp.viewmodel.EmojiViewModel
+import com.guilhermeapc.emojiapp.viewmodel.MainViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AvatarListScreen(navController: NavController, viewModel: EmojiViewModel = hiltViewModel()) {
+fun AvatarListScreen(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }

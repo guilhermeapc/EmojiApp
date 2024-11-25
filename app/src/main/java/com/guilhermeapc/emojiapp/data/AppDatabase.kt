@@ -1,20 +1,24 @@
-// AppDatabase.kt
+// data/AppDatabase.kt
 package com.guilhermeapc.emojiapp.data
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.guilhermeapc.emojiapp.model.Emoji
+import com.guilhermeapc.emojiapp.model.GitHubRepo
 import com.guilhermeapc.emojiapp.model.GitHubUser
+import com.guilhermeapc.emojiapp.model.OwnerTypeConverter
+import com.guilhermeapc.emojiapp.model.RemoteKeys
 
-/***
- * entities: The list of ROOM entities (tables) managed by the database.
- * version: The version number of the database. Increment on schema changes.
- * exportSchema: When set to 'false', ROOM won't export the schema to a folder. 'true' if to keep a version history.
- ***/
-@Database(entities = [Emoji::class, GitHubUser::class],
-    version = 2,
-    exportSchema = false)
+@Database(
+    entities = [Emoji::class, GitHubUser::class, GitHubRepo::class, RemoteKeys::class],
+    version = 4, // Increment on schema change
+    exportSchema = false
+)
+@TypeConverters(OwnerTypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun emojiDao(): EmojiDao
     abstract fun gitHubUserDao(): GitHubUserDao
+    abstract fun gitHubRepoDao(): GitHubRepoDao
+    abstract fun remoteKeysDao(): RemoteKeysDao // New DAO
 }

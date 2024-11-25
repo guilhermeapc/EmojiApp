@@ -5,8 +5,8 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.navigation.NavController
 import com.guilhermeapc.emojiapp.model.Emoji
-import com.guilhermeapc.emojiapp.viewmodel.EmojiUiState
-import com.guilhermeapc.emojiapp.viewmodel.EmojiViewModel
+import com.guilhermeapc.emojiapp.viewmodel.AppUiState
+import com.guilhermeapc.emojiapp.viewmodel.MainViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -23,14 +23,14 @@ class EmojiListScreenUITest {
     @Test
     fun emojiListScreen_clickEmoji_logsEmojiName() {
         // Given
-        val mockViewModel = mockk<EmojiViewModel>(relaxed = true)
+        val mockViewModel = mockk<MainViewModel>(relaxed = true)
         val mockNavController = mockk<NavController>(relaxed = true)
         val emojis = listOf(
             Emoji(name = "+1", url = "https://emoji.url/plus1.png"),
             Emoji(name = "-1", url = "https://emoji.url/minus1.png")
         )
         coEvery { mockViewModel.uiState } returns MutableStateFlow(
-            EmojiUiState(
+            AppUiState(
                 isLoading = false,
                 emojis = emojis,
                 selectedEmoji = null,
@@ -61,9 +61,9 @@ class EmojiListScreenUITest {
     @Test
     fun emojiListScreen_pullsToRefresh_callsFetchEmojis() {
         // Given
-        val mockViewModel = mockk<EmojiViewModel>(relaxed = true)
+        val mockViewModel = mockk<MainViewModel>(relaxed = true)
         coEvery { mockViewModel.uiState } returns MutableStateFlow(
-            EmojiUiState(
+            AppUiState(
                 isLoading = false,
                 emojis = listOf(
                     Emoji(name = "+1", url = "https://emoji.url/plus1.png"),

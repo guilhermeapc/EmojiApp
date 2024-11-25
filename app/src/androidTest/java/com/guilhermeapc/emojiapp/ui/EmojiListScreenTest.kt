@@ -5,8 +5,8 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.navigation.NavController
 import com.guilhermeapc.emojiapp.model.Emoji
-import com.guilhermeapc.emojiapp.viewmodel.EmojiUiState
-import com.guilhermeapc.emojiapp.viewmodel.EmojiViewModel
+import com.guilhermeapc.emojiapp.viewmodel.AppUiState
+import com.guilhermeapc.emojiapp.viewmodel.MainViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,14 +21,14 @@ class EmojiListScreenTest {
     @Test
     fun emojiListScreen_displaysEmojisInGrid() {
         // Given
-        val mockViewModel = mockk<EmojiViewModel>()
+        val mockViewModel = mockk<MainViewModel>()
         val mockNavController = mockk<NavController>()
         val emojis = listOf(
             Emoji(name = "+1", url = "https://emoji.url/plus1.png"),
             Emoji(name = "-1", url = "https://emoji.url/minus1.png")
         )
         coEvery { mockViewModel.uiState } returns MutableStateFlow(
-            EmojiUiState(
+            AppUiState(
                 isLoading = false,
                 emojis = emojis,
                 selectedEmoji = null,
@@ -52,10 +52,10 @@ class EmojiListScreenTest {
     @Test
     fun emojiListScreen_showsLoadingIndicator() {
         // Given
-        val mockViewModel = mockk<EmojiViewModel>()
+        val mockViewModel = mockk<MainViewModel>()
         val mockNavController = mockk<NavController>()
         coEvery { mockViewModel.uiState } returns MutableStateFlow(
-            EmojiUiState(
+            AppUiState(
                 isLoading = true,
                 emojis = emptyList(),
                 selectedEmoji = null,
@@ -78,10 +78,10 @@ class EmojiListScreenTest {
     @Test
     fun emojiListScreen_showsErrorMessage() {
         // Given
-        val mockViewModel = mockk<EmojiViewModel>()
+        val mockViewModel = mockk<MainViewModel>()
         val mockNavController = mockk<NavController>()
         coEvery { mockViewModel.uiState } returns MutableStateFlow(
-            EmojiUiState(
+            AppUiState(
                 isLoading = false,
                 emojis = emptyList(),
                 selectedEmoji = null,

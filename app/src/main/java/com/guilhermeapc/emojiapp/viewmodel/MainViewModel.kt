@@ -1,11 +1,14 @@
-// EmojiViewModel.kt
+// viewmodel/MainViewModel.kt
 package com.guilhermeapc.emojiapp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.guilhermeapc.emojiapp.model.Emoji
+import com.guilhermeapc.emojiapp.model.GitHubRepo
 import com.guilhermeapc.emojiapp.model.GitHubUser
-import com.guilhermeapc.emojiapp.repository.EmojiRepository
+import com.guilhermeapc.emojiapp.repository.AppRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -13,7 +16,7 @@ import retrofit2.HttpException
 import javax.inject.Inject
 import timber.log.Timber
 
-data class EmojiUiState(
+data class AppUiState(
     val isLoading: Boolean = false,
     val emojis: List<Emoji> = emptyList(),
     val selectedEmoji: Emoji? = null,
@@ -22,16 +25,17 @@ data class EmojiUiState(
     val isRefreshing: Boolean = false,
     val searchedUser: GitHubUser? = null,
     val isSearching: Boolean = false,
-    val cachedUsers: List<GitHubUser> = emptyList()
+    val cachedUsers: List<GitHubUser> = emptyList(),
+    val googleRepos: Flow<PagingData<GitHubRepo>> = emptyFlow()
 )
 
 @HiltViewModel
-class EmojiViewModel @Inject constructor(
-    private val repository: EmojiRepository
+class MainViewModel @Inject constructor(
+    private val repository: AppRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(EmojiUiState())
-    val uiState: StateFlow<EmojiUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(AppUiState())
+    val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
 
     init {
         // Observe cached GitHub users
@@ -41,6 +45,7 @@ class EmojiViewModel @Inject constructor(
                 _uiState.update { it.copy(cachedUsers = users) }
             }
         }
+        // Removed internal collection of getReposPager to prevent multiple collectors
     }
 
     fun fetchEmojis() {
@@ -124,7 +129,6 @@ class EmojiViewModel @Inject constructor(
         }
     }
 
-    // New functions for Avatar List
     fun deleteGitHubUser(user: GitHubUser) {
         viewModelScope.launch {
             repository.deleteGitHubUser(user)
@@ -166,5 +170,8 @@ class EmojiViewModel @Inject constructor(
             }
         }
     }
-}
 
+    // Expose the Flow<PagingData<GitHubRepo>> directly
+    val googleRepos:   Flow<PagingData<GitHubRepo>> = repository.getReposPager("google")
+        .cachedIn(viewModelScope)
+}

@@ -1,15 +1,16 @@
-// EmojiViewModelTest.kt
+// MainViewModelTest.kt
 
 package com.guilhermeapc.emojiapp.viewmodel
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
 import com.guilhermeapc.emojiapp.data.EmojiDao
+import com.guilhermeapc.emojiapp.data.GitHubRepoDao
 import com.guilhermeapc.emojiapp.data.GitHubUserDao
+import com.guilhermeapc.emojiapp.data.RemoteKeysDao
 import com.guilhermeapc.emojiapp.model.Emoji
 import com.guilhermeapc.emojiapp.model.GitHubUser
-import com.guilhermeapc.emojiapp.network.EmojiApiService
 import com.guilhermeapc.emojiapp.network.GitHubApiService
-import com.guilhermeapc.emojiapp.repository.EmojiRepository
+import com.guilhermeapc.emojiapp.repository.AppRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -22,32 +23,38 @@ import org.junit.Rule
 import org.junit.Test
 
 @ExperimentalCoroutinesApi
-class EmojiViewModelTest {
+class MainViewModelTest {
 
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
     private val testDispatcher = StandardTestDispatcher()
 
-    private lateinit var repository: EmojiRepository
+    private lateinit var repository: AppRepository
     private lateinit var emojiDao: EmojiDao
     private lateinit var githubUserDao: GitHubUserDao
-    private lateinit var emojiApiService: EmojiApiService
+    private lateinit var gitHubRepoDao: GitHubRepoDao
+    private lateinit var remoteKeysDao: RemoteKeysDao
+    private lateinit var emojiApiService: GitHubApiService
     private lateinit var githubApiService: GitHubApiService
-    private lateinit var viewModel: EmojiViewModel
+    private lateinit var viewModel: MainViewModel
 
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         emojiDao = mockk(relaxed = true)
         emojiApiService = mockk(relaxed = true)
-        repository = EmojiRepository(
-            emojiApiService = emojiApiService,
+        gitHubRepoDao = mockk(relaxed = true)
+        gitHubRepoDao = mockk(relaxed = true)
+        repository = AppRepository(
             gitHubApiService = githubApiService,
             emojiDao = emojiDao,
-            gitHubUserDao = githubUserDao)
+            gitHubUserDao = githubUserDao,
+            gitHubRepoDao = gitHubRepoDao,
+            remoteKeysDao = remoteKeysDao
+        )
 
-        viewModel = EmojiViewModel(repository)
+        viewModel = MainViewModel(repository)
     }
 
     @After
