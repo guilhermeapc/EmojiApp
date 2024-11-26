@@ -28,10 +28,11 @@ class EmojiRepositoryTest {
     @Before
     fun setUp() {
         // Create mock instances
-        gitHubApiService = mockk(relaxed = true)
-        emojiDao = mockk(relaxed = true)
-        gitHubRepoDao = mockk(relaxed = true)
-        remoteKeysDao = mockk(relaxed = true)
+        gitHubApiService = mockk()
+        emojiDao = mockk()
+        gitHubUserDao = mockk()
+        gitHubRepoDao = mockk()
+        remoteKeysDao = mockk()
         // Initialize repository with mocks
         repository = AppRepository(
             emojiDao = emojiDao,
