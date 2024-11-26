@@ -75,7 +75,7 @@ class AvatarListScreenUITest {
         }
 
         // Click the delete button
-        composeTestRule.onNodeWithContentDescription("Delete Avatar").performClick()
+        composeTestRule.onNodeWithTag("user_avatar_card").performClick()
 
         // Then
         coVerify { mockViewModel.deleteGitHubUser(user) }

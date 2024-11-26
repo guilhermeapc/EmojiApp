@@ -122,6 +122,7 @@ fun AvatarListItem(user: GitHubUser, onDelete: (GitHubUser) -> Unit) {
         onClick = { onDelete(user) },
         modifier = Modifier
             .fillMaxWidth()
+            .testTag("user_avatar_card")
             .padding(vertical = 4.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
