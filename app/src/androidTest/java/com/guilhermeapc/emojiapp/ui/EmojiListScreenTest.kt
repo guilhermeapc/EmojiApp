@@ -21,7 +21,7 @@ class EmojiListScreenTest {
     @Test
     fun emojiListScreen_displaysEmojisInGrid() {
         // Given
-        val mockViewModel = mockk<MainViewModel>()
+        val mockViewModel = mockk<MainViewModel>(relaxed = true)
         val mockNavController = mockk<NavController>()
         val emojis = listOf(
             Emoji(name = "+1", url = "https://emoji.url/plus1.png"),
@@ -52,7 +52,7 @@ class EmojiListScreenTest {
     @Test
     fun emojiListScreen_showsLoadingIndicator() {
         // Given
-        val mockViewModel = mockk<MainViewModel>()
+        val mockViewModel = mockk<MainViewModel>(relaxed = true)
         val mockNavController = mockk<NavController>()
         coEvery { mockViewModel.uiState } returns MutableStateFlow(
             AppUiState(
@@ -78,7 +78,7 @@ class EmojiListScreenTest {
     @Test
     fun emojiListScreen_showsErrorMessage() {
         // Given
-        val mockViewModel = mockk<MainViewModel>()
+        val mockViewModel = mockk<MainViewModel>(relaxed = true)
         val mockNavController = mockk<NavController>()
         coEvery { mockViewModel.uiState } returns MutableStateFlow(
             AppUiState(

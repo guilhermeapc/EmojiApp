@@ -68,6 +68,7 @@ dependencies {
     // Data persistence
     implementation(libs.androidx.room.runtime)
     testImplementation(libs.androidx.core)
+    androidTestImplementation(libs.core.testing)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
@@ -98,6 +99,7 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     androidTestImplementation(libs.androidx.ui.test)
+    androidTestImplementation(libs.androidx.room.testing)
     androidTestImplementation(libs.mockk.android)
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
