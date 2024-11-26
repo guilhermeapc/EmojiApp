@@ -7,15 +7,21 @@ EmojiApp is a sample Android application demonstrating the integration of APIs, 
 ## **Features**
 
 - **Emoji List**  
-  Fetch and display a list of emojis from GitHub's emoji API. The app allows users to interact with the emoji list, including adding, removing, and undoing actions, all with a responsive UI.
+  Fetch and display a random or list of emojis from GitHub's emoji API. The app allows users to interact with the emoji list, including adding, removing, and undoing actions, all with a responsive UI.
+
+  ![emojis](https://github.com/user-attachments/assets/8da8c380-d4d4-4535-aefb-5ab94e60ff27)
 
 - **Avatar Search**  
   Search for GitHub users by username. Display user avatars and cache them locally for future use, reducing redundant API calls.
+
+  ![avatars](https://github.com/user-attachments/assets/fa9b9e0b-1e1d-4fb7-8919-caba43b16adc)
 
 - **Google Repos Browser**  
   Explore GitHub repositories under the Google organization. Features:
     - Pagination and Caching for efficient data fetching.
     - Tap to visit repository details directly on GitHub.
+
+  ![repos_v2](https://github.com/user-attachments/assets/e2a4cfb7-18dd-4f39-9923-45594dde9092)
 
 ---
 
